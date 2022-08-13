@@ -1,0 +1,8 @@
+build/
+**/__pycache__
+**.*.pyc
+**/.pytest_cache
+Pipfile
+Pipfile.lock
+.tox/
+*.egg-info
