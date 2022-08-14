@@ -45,6 +45,10 @@ assert mags.transform(4096, "Mib:Gib") == 4
 
 See the module tests for more examples.
 
+## License
+
+Check the file [LICENSE](LICENSE).
+
 ## Contributions
 
 Feel free to contribute to this code at:
