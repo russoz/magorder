@@ -1,0 +1,6 @@
+tox
+bumpversion
+pylint
+pytest
+pytest-cov
+twine
