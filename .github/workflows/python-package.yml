@@ -30,8 +30,7 @@ jobs:
         if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
     - name: Lint with pylint
       run: |
-        # stop the build if there are Python syntax errors or undefined names
         pylint magorder
     - name: Test with pytest
       run: |
-        pytest 
+        pytest
