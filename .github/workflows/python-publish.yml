@@ -6,11 +6,9 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: Release minor version
 
-on:
-  release:
-    types: [published]
+on: workflow_dispatch
 
 permissions:
   contents: read
@@ -30,6 +28,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements-test.txt
+    - name: Lint with pylint
+      run: pylint magorder
+    - name: Test with pytest
+      run: pytest
+    - name: Bump version minor
+      run: bumpversion minor
     - name: Build package
       run: python -m build
     - name: Publish package
