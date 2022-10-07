@@ -53,4 +53,4 @@ jobs:
           password: ${{ secrets.PYPI_API_TOKEN }}
       - name: git push
         run: |
-          git push --tags
+          git push --all
