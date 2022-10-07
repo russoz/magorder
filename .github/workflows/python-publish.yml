@@ -13,6 +13,10 @@ on: workflow_dispatch
 permissions:
   contents: read
 
+concurrency:
+  group: release-minor-version
+  cancel-in-progress: true
+
 jobs:
   deploy:
 
