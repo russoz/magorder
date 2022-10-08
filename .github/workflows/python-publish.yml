@@ -8,7 +8,9 @@
 
 name: Release minor version
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    ref: main
 
 permissions:
   contents: write
