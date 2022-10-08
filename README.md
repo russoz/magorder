@@ -1,5 +1,6 @@
 magorder
 ========
+[![codecov](https://codecov.io/gh/russoz/magorder/branch/main/graph/badge.svg?token=URMPURMN8S)](https://codecov.io/gh/russoz/magorder)
 
 This library streamlines the conversion between different orders of magnitude, like transforming nm (nanometers) to meters, or kilobytes to gigabytes.
 
