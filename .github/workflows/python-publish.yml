@@ -8,7 +8,18 @@
 
 name: Release minor version
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      bump_part:
+        description: Part of the version number to be bumped up
+        required: true
+        default: minor
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 permissions:
   contents: write
@@ -28,8 +39,8 @@ jobs:
           fetch-depth: '0'
       - name: git
         run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
+          git config user.name "Alexei Znamensky"
+          git config user.email "<russoz@gmail.com>"
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -39,11 +50,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-test.txt
       - name: Lint with pylint
-        run: pylint magorder
+        run: |
+          pylint magorder
       - name: Test with pytest
-        run: pytest
-      - name: Bump version minor
-        run: bumpversion minor
+        run: |
+          pytest
+      - name: Bump version ${{ inputs.bump_part }}
+        run: |
+          bumpversion --verbose ${{ inputs.bump_part }}
       - name: Build package
         run: python -m build
       - name: Publish package
