@@ -3,6 +3,6 @@
 from setuptools import setup, find_packages
 
 setup(name='magorder',
-      version='0.10',
+      version='0.11',
       packages=find_packages(),
       )
