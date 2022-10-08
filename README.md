@@ -1,9 +1,11 @@
 magorder
 ========
+[![codecov](https://codecov.io/gh/russoz/magorder/branch/main/graph/badge.svg?token=URMPURMN8S)](https://codecov.io/gh/russoz/magorder)
 
-This library streamlines the conversion of different multipliers, like transforming nm (nanometers) to meters, or kilobytes to gigabytes.
+This library streamlines the conversion between different orders of magnitude, like transforming nm (nanometers) to meters, or kilobytes to gigabytes.
 
-It is meant to take the load off the developer of larger applications.
+It is meant to provide a drop-in mechanism that simple and
+consistent to manipulate such conversions.
 
 ## Installation
 
@@ -17,12 +19,16 @@ This library has no runtime dependencies.
 
 ## Usage
 
-To use the library in some other code:
+To use the library:
 
 ```python
+# import the MagnitudeUnit class that meets your requirements
 from magorder.stdsi import StdSIMagnitudeUnit
 
+# create a magorder object, associated with an unit
 mag = StdSIMagnitudeUnit("m")
+
+# transform can convert from a different order of magnitude to the base unit
 assert mag.transform(0.1, "km") == 100
 assert mag.transform(100_000_000, "µm") == 100
 assert mag.transform(100_000_000_000_000_000_000_000_000.0, "ym") == 100

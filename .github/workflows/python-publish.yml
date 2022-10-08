@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Release minor version
+name: Release version
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: release-minor-version
+  group: release-version
   cancel-in-progress: true
 
 jobs:
