@@ -54,3 +54,4 @@ jobs:
       - name: git push
         run: |
           git push --all
+          git push --tags
