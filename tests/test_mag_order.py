@@ -21,7 +21,7 @@ def test_base_magnitude_order_to_prefix():
     assert ord.to_prefix(3) == "k"
     assert ord.to_prefix(-6) == "µ"
 
-def test_test_base_magnitude_order_alias_conflict():
+def test_base_magnitude_order_alias_conflict():
     ord = [
         {"prefix": "µ", "power": -6, "aliases": ["u"]},
         {"prefix": "m", "power": -3},
@@ -30,7 +30,17 @@ def test_test_base_magnitude_order_alias_conflict():
     with pytest.raises(ValueError):
         b = BaseMagnitudeOrder(ord)
 
-def test_test_base_magnitude_order_invalid_limits():
+def test_base_magnitude_order_duplicate_conflict():
+    ord = [
+        {"prefix": "µ", "power": -6, "aliases": ["u"]},
+        {"prefix": "m", "power": -3},
+        {"prefix": "m", "power": 6},
+        {"prefix": "", "power": 0, "aliases": ["m"]},
+    ]
+    with pytest.raises(ValueError):
+        b = BaseMagnitudeOrder(ord)
+
+def test_base_magnitude_order_invalid_limits():
     ord = [
         {"prefix": "µ", "power": -6, "aliases": ["u"]},
         {"prefix": "m", "power": -3},

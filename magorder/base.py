@@ -5,12 +5,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Set
 
 from .types import MagOrderListSpec, MagOrderSpec, Number
 
 class MagnitudeOrder:
+    """This class represents one order of magnitude."""
+
     def __init__(self, prefix: str, power: int, aliases: Optional[Sequence[str]] = None) -> None:
+        """Creates a ``MagnitudeOrder`` object.
+
+        Args:
+            prefix (str): primary prefix for this order of magnitude. Examples: "c" for centimeters or "k" for kilograms.
+            power (int): integer power of the base (usually 10) for this order of magnitude. Examples: 3 for "k" (from 10 ** 3), and -3 for "m" (from 10 ** -3).
+            aliases (Optional[Sequence[str]], optional): List of prefix aliases. Defaults to ``None``. Examples: some systems won't display "µg" correctly, so we might use "ug" as an alias.
+        """
         self.prefix = prefix
         self.power = power
         if aliases is None:
@@ -19,34 +28,87 @@ class MagnitudeOrder:
         self._matching = set(aliases).union({prefix})
 
     @property
-    def prefixes(self):
+    def prefixes(self) -> Set[str]:
+        """All prefixes recognized by this magnitude order.
+
+        Returns:
+            Set[str]: a set containing the primary prefix and its aliases.
+        """
         return set(self._matching)
 
-    def match(self, text: str) -> bool:
-        return text in self.prefixes
+    def match(self, prefix: str) -> bool:
+        """Test whether a string is a valid prefix for this magnitude order.
 
-    def match_all(self, text: MagOrderSpec) -> bool:
-        return text in self.prefixes or text == self.power
+        Args:
+            prefix (str): string to be tested.
+
+        Returns:
+            bool: ``True`` if it is a valid prefix, ``False`` otherwise.
+        """
+        return prefix in self.prefixes
+
+    def match_all(self, loc: MagOrderSpec) -> bool:
+        """Test whether the parameter is a valid prefix or if it matches the
+        power of the base for this order of magnitude.
+
+        Args:
+            loc (MagOrderSpec): string to be tested.
+
+        Returns:
+            bool: ``True`` if it is a valid prefix or power, ``False`` otherwise.
+        """
+        return loc in self.prefixes or loc == self.power
 
 
 class BaseMagnitudeOrder:
-    """Base class for calculating orders of magnitude.
-    """
+    """Base class for calculating orders of magnitude."""
 
     class MagnitudeDoesNotExist(ValueError):
+        """Exception for when a magnitude order passed as a parameter does not exist."""
         def __init__(self, text: MagOrderSpec) -> None:
+            """Create the exception object.
+
+            Args:
+                text (MagOrderSpec): the invalid specification for the magnitude order.
+            """
             super().__init__(f"Cannot find magnitude order with '{text}'")
 
 
-    class AliasConflict(ValueError):
-        def __init__(self, alias: str, prefix: str) -> None:
-            super().__init__(f"Alias '{alias}' for magnitude order '{prefix}' conflicts with existing magnitude order")
+    class PrefixConflict(ValueError):
+        """Exception for when a magnitude order declares an alias that clashes with
+        a prefix (or alias) of another order of magnitude.
+        """
+        def __init__(self, prefix: str, alias: Optional[str] = None) -> None:
+            """Create the exception object.
+
+            Args:
+                prefix (str): prefix causing the conflict.
+                alias (Optional[str]): the offending alias, when applicable.
+            """
+            if alias is None:
+                msg = f"Magnitude order '{prefix}' conflicts with existing magnitude order"
+            else:
+                msg = f"Alias '{alias}' for magnitude order '{prefix}' conflicts with existing magnitude order"
+            super().__init__(msg)
 
 
     def __init__(self, magnitudes: MagOrderListSpec,
                  lower: Optional[MagOrderSpec] = None,
                  upper: Optional[MagOrderSpec] = None,
-                 base: int = 10, default_power: int = 0):
+                 base: int = 10, default: str = ""):
+        """Created the object.
+
+        Args:
+            magnitudes (MagOrderListSpec): list of dictionaries, each specifying one order of magnitude.
+            lower (Optional[MagOrderSpec], optional): smaller order of magnitude allowed. Defaults to the smaller one in ``magnitudes``.
+            upper (Optional[MagOrderSpec], optional): largest order of magnitude allowed. Defaults to the largest one in ``magnitudes``.
+            base (int, optional): base number used to apply the magnitude order's powers. Defaults to 10.
+            default_power (int, optional): default power of the base to be used when not specified in transformations. Defaults to 0.
+
+        Raises:
+            self.MagnitudeDoesNotExist: raised if any of the specified lower or upper bounds does not exist.
+            self.PrefixConflict: raised if the magnitudes specs contains conflicts.
+        """
         mags = [MagnitudeOrder(**kw) for kw in magnitudes]
 
         lower_power = mags[0].power
@@ -66,35 +128,76 @@ class BaseMagnitudeOrder:
         mags = [m for m in mags if lower_power <= m.power <= upper_power]
 
         self.magnitudes = mags
-        self._mags_dict = {m.prefix: m for m in mags}
+        self._mags_dict = {}
         for m in mags:
+            if m.prefix in self._mags_dict:
+                raise self.PrefixConflict(m.prefix)
+            self._mags_dict[m.prefix] = m
             for a in m.aliases:
                 if a in self._mags_dict and self._mags_dict[a] != m:
-                    raise self.AliasConflict(a, m.prefix)
+                    raise self.PrefixConflict(m.prefix, a)
                 self._mags_dict[a] = m
         self.base = base
-        self.default_power = default_power
+        self.default = default
 
     def magnitude_by_prefix(self, prefix: str) -> "MagnitudeOrder":
+        """Returns the MagnitudeOrder object matching a prefix.
+
+        Args:
+            prefix (str): magnitude order's prefix to be matched.
+
+        Raises:
+            self.MagnitudeDoesNotExist: raised if the prefix does not exist.
+
+        Returns:
+            MagnitudeOrder: a MagnitudeOrder object.
+        """
         try:
             return self._mags_dict[prefix]
         except KeyError:
             raise self.MagnitudeDoesNotExist(prefix)
 
     def convert(self, value: Number,
-                to_order: Optional[str] = None,
                 from_order: Optional[str] = None,
+                to_order: Optional[str] = None,
                 decimals: Optional[int] = None) -> float:
-        to_order_power = self.default_power if not to_order else self.magnitude_by_prefix(to_order).power
-        from_order_power = self.default_power if not from_order else self.magnitude_by_prefix(from_order).power
+        """Converts a value between two specified magnitude orders.
+
+        Args:
+            value (Number): number to be converted.
+            from_order (Optional[str], optional): prefix for the targeted order of magnitude. Defaults to the prefix matching the ``default_order``.
+            to_order (Optional[str], optional): prefix for the value's original order of magnitude. Defaults to the prefix matching the ``default_order``.
+            decimals (Optional[int], optional): result is rounded to mitigate floating-point errors. Defaults to the greater of 6 and the absolute difference between the two magnitude's powers.
+
+        Returns:
+            float: the value converted to
+        """
+        to_order_power = self.magnitude_by_prefix(to_order if to_order else self.default).power
+        from_order_power = self.magnitude_by_prefix(from_order if from_order else self.default).power
         if decimals is None:
             decimals = max(6, abs(to_order_power - from_order_power))
         return round(value / (self.base ** (to_order_power - from_order_power)), decimals)
 
-    def factor(self, prefix) -> Number:
+    def factor(self, prefix: str) -> Number:
+        """Multiplication factor for a specific prefix.
+
+        Args:
+            prefix (str): magnitude prefix for which to calculate the multiplication factor (base to the prefix's power).
+
+        Returns:
+            Number: the multiplication factor for the prefix.
+        """
         return self.base ** self.magnitude_by_prefix(prefix).power
 
     def to_prefix(self, power: int) -> Optional[str]:
+        """Converts from a power of base to the magnitude prefix.
+
+        Args:
+            power (int): value of the power to be converted.
+
+        Returns:
+            Optional[str]: primary prefix for the specified power, or ``None`` if there's no magnitude for that value of power.
+        """
         for m in self.magnitudes:
             if power == m.power:
                 return m.prefix
