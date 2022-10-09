@@ -13,7 +13,7 @@ class MagnitudeOrder:
     """This class represents one order of magnitude."""
 
     def __init__(self, prefix: str, power: int, aliases: Optional[Sequence[str]] = None) -> None:
-        """Creates a ``MagnitudeOrder`` object.
+        """Create an object.
 
         Args:
             prefix (str): primary prefix for this order of magnitude. Examples: "c" for centimeters or "k" for kilograms.
@@ -96,7 +96,7 @@ class MagnitudeSystem:
                  lower: Optional[MagOrderSpec] = None,
                  upper: Optional[MagOrderSpec] = None,
                  base: int = 10, default: str = ""):
-        """Create the object.
+        """Create an object.
 
         Args:
             magnitudes (MagOrderListSpec): list of dictionaries, each specifying one order of magnitude.
@@ -150,7 +150,7 @@ class MagnitudeSystem:
             self.MagnitudeDoesNotExist: raised if the prefix does not exist.
 
         Returns:
-            MagnitudeOrder: a MagnitudeOrder object.
+            MagnitudeOrder: the MagnitudeOrder object corresponding the specified prefix.
         """
         try:
             return self._prefix_mag_map[prefix]
@@ -161,7 +161,7 @@ class MagnitudeSystem:
                 from_order: Optional[str] = None,
                 to_order: Optional[str] = None,
                 decimals: Optional[int] = None) -> float:
-        """Converts a value between two specified magnitude orders.
+        """Convert a value between two specified magnitude orders.
 
         Args:
             value (Number): number to be converted.
@@ -181,7 +181,7 @@ class MagnitudeSystem:
         return round(value / (self.base ** (to_order_power - from_order_power)), decimals)
 
     def factor(self, prefix: str) -> Number:
-        """Multiplication factor for a specific prefix.
+        """Return the multiplication factor for a specific prefix.
 
         Args:
             prefix (str): magnitude prefix for which to calculate the multiplication factor (base to the prefix's power).
@@ -192,7 +192,7 @@ class MagnitudeSystem:
         return self.base ** self.magnitude_by_prefix(prefix).power
 
     def to_prefix(self, power: int) -> Optional[str]:
-        """Convert from a power of base to the magnitude prefix.
+        """Return the primary prefix for a specific power of base.
 
         Args:
             power (int): value of the power to be converted.
