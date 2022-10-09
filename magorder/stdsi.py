@@ -22,7 +22,7 @@ class StdSIMagnitudeUnit(BaseMagnitudeUnit):
         {"prefix": "", "power": 0},
         {"prefix": "da", "power": 1},
         {"prefix": "h", "power": 2},
-        {"prefix": "k", "power": 3},
+        {"prefix": "k", "power": 3, "aliases": ["K"]},
         {"prefix": "M", "power": 6},
         {"prefix": "G", "power": 9},
         {"prefix": "T", "power": 12},
