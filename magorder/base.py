@@ -92,7 +92,7 @@ class MagnitudeSystem:
             super().__init__(msg)
 
 
-    def __init__(self, magnitudes: MagOrderListSpec,
+    def __init__(self, magnitudes_spec: MagOrderListSpec,
                  lower: Optional[MagOrderSpec] = None,
                  upper: Optional[MagOrderSpec] = None,
                  base: int = 10, default: str = ""):
@@ -109,7 +109,7 @@ class MagnitudeSystem:
             self.MagnitudeDoesNotExist: raised if any of the specified lower or upper bounds does not exist.
             self.PrefixConflict: raised if the magnitudes specs contains conflicts.
         """
-        mags = [MagnitudeOrder(**kw) for kw in magnitudes]
+        mags = [MagnitudeOrder(**kw) for kw in magnitudes_spec]
 
         lower_power = mags[0].power
         if lower is not None:
