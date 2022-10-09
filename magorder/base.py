@@ -206,7 +206,7 @@ class MagnitudeSystem:
         return None
 
 
-class BaseMagnitudeUnit:
+class MagnitudeUnit:
     """Base class for magnitude-aware unit."""
     class UnknownUnit(ValueError):
         """Exception for when a unit passed as parameter is not known."""

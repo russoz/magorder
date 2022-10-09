@@ -4,10 +4,10 @@
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .base import MagnitudeSystem, BaseMagnitudeUnit
+from .base import MagnitudeSystem, MagnitudeUnit
 
 
-class SIDataMagnitudeUnit(BaseMagnitudeUnit):
+class SIDataMagnitudeUnit(MagnitudeUnit):
     si_order = [
         {"prefix": "", "power": 0},
         {"prefix": "k", "power": 1},
@@ -25,7 +25,7 @@ class SIDataMagnitudeUnit(BaseMagnitudeUnit):
         super().__init__(unit, orders)
 
 
-class IECDataMagnitudeUnit(BaseMagnitudeUnit):
+class IECDataMagnitudeUnit(MagnitudeUnit):
     iec_order = [
         {"prefix": "", "power": 0},
         {"prefix": "Ki", "power": 1},
