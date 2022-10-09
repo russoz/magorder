@@ -6,6 +6,7 @@
 
 import pytest
 
+from magorder.base import BaseMagnitudeOrder
 from magorder.stdsi import StdSIMagnitudeUnit
 
 
@@ -19,3 +20,23 @@ def test_base_magnitude_order_to_prefix():
     ord = StdSIMagnitudeUnit("m").orders
     assert ord.to_prefix(3) == "k"
     assert ord.to_prefix(-6) == "µ"
+
+def test_test_base_magnitude_order_alias_conflict():
+    ord = [
+        {"prefix": "µ", "power": -6, "aliases": ["u"]},
+        {"prefix": "m", "power": -3},
+        {"prefix": "", "power": 0, "aliases": ["m"]},
+    ]
+    with pytest.raises(ValueError):
+        b = BaseMagnitudeOrder(ord)
+
+def test_test_base_magnitude_order_invalid_limits():
+    ord = [
+        {"prefix": "µ", "power": -6, "aliases": ["u"]},
+        {"prefix": "m", "power": -3},
+        {"prefix": "", "power": 0},
+    ]
+    with pytest.raises(ValueError):
+        b = BaseMagnitudeOrder(ord, lower="y")
+    with pytest.raises(ValueError):
+        b = BaseMagnitudeOrder(ord, upper="Y")
