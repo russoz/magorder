@@ -7,3 +7,4 @@ Pipfile
 Pipfile.lock
 .tox/
 *.egg-info
+.coverage
