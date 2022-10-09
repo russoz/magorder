@@ -4,8 +4,7 @@ magorder
 
 This library streamlines the conversion between different orders of magnitude, like transforming nm (nanometers) to meters, or kilobytes to gigabytes.
 
-It is meant to provide a drop-in mechanism that simple and
-consistent to manipulate such conversions.
+It is meant to provide a drop-in mechanism that is simple and consistent to manipulate such conversions.
 
 ## Installation
 
