@@ -15,10 +15,12 @@ def test_simple_std_si_magnitude():
     assert mag.transform(0.1, "km") == 100
     assert mag.transform(100_000_000, "µm") == 100
     assert mag.transform(100_000_000_000_000_000_000_000_000.0, "ym") == 100
-    assert mag.transform(0.0000000000000000000001, "Ym", 3) == 100
+    assert mag.transform(0.000_000_000_000_000_000_000_1, "Ym", decimals=3) == 100
     assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym") == 0.0001
-    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", 4) == 0.0001
-    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", 3) == 0.0
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=4) == 0.0001
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=4) == 0.0001
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=3) == 0.0
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=3) == 0.0
 
 def test_std_si_magnitude_aliases():
     mag = StdSIMagnitudeUnit("m")
@@ -38,3 +40,8 @@ def test_simple_std_si_magnitude_bounds():
 def test_from_std_si_magnitude():
     mag = StdSIMagnitudeUnit("m")
     assert mag.transform(1, "km") == 1000
+
+def test_magnitude_limits():
+    mag = StdSIMagnitudeUnit("m", lower="c")
+    with pytest.raises(ValueError):
+        assert mag.transform(1000, "mm") == 1

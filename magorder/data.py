@@ -8,17 +8,17 @@ from .base import BaseMagnitudeOrder, BaseMagnitudeUnit
 
 
 class SIDataMagnitudeUnit(BaseMagnitudeUnit):
-    si_order = {
-        "": 0,
-        "k": 1,
-        "M": 2,
-        "G": 3,
-        "T": 4,
-        "P": 5,
-        "E": 6,
-        "Z": 7,
-        "Y": 8,
-    }
+    si_order = [
+        {"prefix": "", "power": 0},
+        {"prefix": "k", "power": 1},
+        {"prefix": "M", "power": 2},
+        {"prefix": "G", "power": 3},
+        {"prefix": "T", "power": 4},
+        {"prefix": "P", "power": 5},
+        {"prefix": "E", "power": 6},
+        {"prefix": "Z", "power": 7},
+        {"prefix": "Y", "power": 8},
+    ]
 
     def __init__(self, unit, lower=None, upper=None):
         orders = BaseMagnitudeOrder(self.si_order, lower=lower, upper=upper, base=1000)
@@ -26,29 +26,36 @@ class SIDataMagnitudeUnit(BaseMagnitudeUnit):
 
 
 class IECDataMagnitudeUnit(BaseMagnitudeUnit):
-    iec_order = {
-        "": 0,
-        "Ki": 1,
-        "Mi": 2,
-        "Gi": 3,
-        "Ti": 4,
-        "Pi": 5,
-        "Ei": 6,
-        "Zi": 7,
-        "Yi": 8,
-    }
+    iec_order = [
+        {"prefix": "", "power": 0},
+        {"prefix": "Ki", "power": 1},
+        {"prefix": "Mi", "power": 2},
+        {"prefix": "Gi", "power": 3},
+        {"prefix": "Ti", "power": 4},
+        {"prefix": "Pi", "power": 5},
+        {"prefix": "Ei", "power": 6},
+        {"prefix": "Zi", "power": 7},
+        {"prefix": "Yi", "power": 8},
+    ]
 
-    def __init__(self, unit, lower=None, upper=None, legacy=False, case=True):
+    def __init__(self, unit: str, lower=None, upper=None, legacy=False, case=True):
+        def _no_case(order):
+            existing = set(order.get("aliases", [])).union({order["prefix"]})
+            aliases = {e.lower() for e in existing}
+            new_order = dict(order)
+            new_order["aliases"] = list(aliases)
+            return new_order
+
         self.case = case
-        orders = dict(self.iec_order)
+        orders = list(self.iec_order)
         if legacy:
-            orders.update({"K": 1, "M": 2, "G": 3})
+            orders.extend([
+                {"prefix": "K", "power": 1},
+                {"prefix": "M", "power": 2},
+                {"prefix": "G", "power": 3},
+            ])
         if not case:
-            orders = dict((k.lower(), v) for k, v in orders.items())
+            orders = [_no_case(o) for o in orders]
+
         orders = BaseMagnitudeOrder(orders, lower=lower, upper=upper, base=1024)
         super().__init__(unit, orders)
-
-    def transform(self, value, units=None):
-        if not self.case and units is not None:
-            units = units.lower()
-        return super().transform(value, units)
