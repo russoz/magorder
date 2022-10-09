@@ -31,7 +31,7 @@ mag = StdSIMagnitudeUnit("m")
 assert mag.transform(0.1, "km") == 100
 assert mag.transform(100_000_000, "µm") == 100
 assert mag.transform(100_000_000_000_000_000_000_000_000.0, "ym") == 100
-assert mag.transform(0.0000000000000000000001, "Ym", 3) == 100
+assert mag.transform(0.0000000000000000000001, "Ym", decimals=3) == 100
 ```
 
 Or to transform data units:
@@ -41,11 +41,11 @@ from magorder.data import SIDataMagnitudeUnit, IECDataMagnitudeUnit
 
 mags = SIDataMagnitudeUnit("b")
 assert mags.transform(1, "kb") == 1000
-assert mags.transform(1, "Gb:kb") == 1_000_000
+assert mags.transform(1, from_unit="Gb", to_unit="kb") == 1_000_000
 
 mags = IECDataMagnitudeUnit("b")
 assert mags.transform(1, "Kib") == 1024
-assert mags.transform(4096, "Mib:Gib") == 4
+assert mags.transform(4096, from_unit="Mib", to_unit="Gib") == 4
 ```
 
 See the module tests for more examples.
