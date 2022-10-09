@@ -96,7 +96,7 @@ class MagnitudeSystem:
                  lower: Optional[MagOrderSpec] = None,
                  upper: Optional[MagOrderSpec] = None,
                  base: int = 10, default: str = ""):
-        """Created the object.
+        """Create the object.
 
         Args:
             magnitudes (MagOrderListSpec): list of dictionaries, each specifying one order of magnitude.
@@ -128,20 +128,20 @@ class MagnitudeSystem:
         mags = [m for m in mags if lower_power <= m.power <= upper_power]
 
         self.magnitudes = mags
-        self._mags_dict = {}
+        self._prefix_mag_map = {}
         for m in mags:
-            if m.prefix in self._mags_dict:
+            if m.prefix in self._prefix_mag_map:
                 raise self.PrefixConflict(m.prefix)
-            self._mags_dict[m.prefix] = m
+            self._prefix_mag_map[m.prefix] = m
             for a in m.aliases:
-                if a in self._mags_dict and self._mags_dict[a] != m:
+                if a in self._prefix_mag_map and self._prefix_mag_map[a] != m:
                     raise self.PrefixConflict(m.prefix, a)
-                self._mags_dict[a] = m
+                self._prefix_mag_map[a] = m
         self.base = base
         self.default = default
 
     def magnitude_by_prefix(self, prefix: str) -> "MagnitudeOrder":
-        """Returns the MagnitudeOrder object matching a prefix.
+        """Return the MagnitudeOrder object matching a prefix.
 
         Args:
             prefix (str): magnitude order's prefix to be matched.
@@ -153,7 +153,7 @@ class MagnitudeSystem:
             MagnitudeOrder: a MagnitudeOrder object.
         """
         try:
-            return self._mags_dict[prefix]
+            return self._prefix_mag_map[prefix]
         except KeyError:
             raise self.MagnitudeDoesNotExist(prefix)
 
@@ -174,6 +174,8 @@ class MagnitudeSystem:
         """
         to_order_power = self.magnitude_by_prefix(to_order if to_order else self.default).power
         from_order_power = self.magnitude_by_prefix(from_order if from_order else self.default).power
+        if to_order_power == from_order_power:
+            return value
         if decimals is None:
             decimals = max(6, abs(to_order_power - from_order_power))
         return round(value / (self.base ** (to_order_power - from_order_power)), decimals)
@@ -190,7 +192,7 @@ class MagnitudeSystem:
         return self.base ** self.magnitude_by_prefix(prefix).power
 
     def to_prefix(self, power: int) -> Optional[str]:
-        """Converts from a power of base to the magnitude prefix.
+        """Convert from a power of base to the magnitude prefix.
 
         Args:
             power (int): value of the power to be converted.
@@ -205,15 +207,45 @@ class MagnitudeSystem:
 
 
 class BaseMagnitudeUnit:
+    """Base class for magnitude-aware unit."""
     class UnknownUnit(ValueError):
+        """Exception for when a unit passed as parameter is not known."""
         def __init__(self, unit: str) -> None:
+            """Create the exception object.
+
+            Args:
+                unit (str): offending unit parameter.
+            """
             super().__init__(f"Unknown unit '{unit}'")
 
-    def __init__(self, base_unit: str, orders: MagnitudeSystem):
-        self.base_unit = base_unit
-        self.orders = orders
+    def __init__(self, base_unit: str, mag_sys: MagnitudeSystem):
+        """Create the object.
 
-    def transform(self, value: Number, from_unit: Optional[str] = None, to_unit: Optional[str] = None, decimals: Optional[int] = None):
+        Args:
+            base_unit (str): base unit for this system. Examples: "m", "g".
+            mag_sys (MagnitudeSystem): magnitude system to be used with the base unit.
+        """
+        self.base_unit = base_unit
+        self.mag_sys = mag_sys
+
+    def transform(self, value: Number,
+                  from_unit: Optional[str] = None,
+                  to_unit: Optional[str] = None,
+                  decimals: Optional[int] = None) -> float:
+        """Transform a value from one prefixed unit to another.
+
+        Args:
+            value (Number): value to be transofrmed.
+            from_unit (Optional[str], optional): prefixed unit to transform from. Defaults to the object's base_unit.
+            to_unit (Optional[str], optional): prefixed unit to transform to. Defaults to the object's base_unit.
+            decimals (Optional[int], optional): _description_. Defaults to None.
+
+        Raises:
+            self.UnknownUnit: raised if any of from_unit or to_unit is not recognized.
+
+        Returns:
+            float: value in the target unit.
+        """
         if from_unit is None:
             from_unit = self.base_unit
         if to_unit is None:
@@ -227,6 +259,6 @@ class BaseMagnitudeUnit:
             raise self.UnknownUnit(to_unit)
         to_unit = to_unit[0:-len(self.base_unit)]
 
-        return self.orders.convert(value=value, to_order=to_unit, from_order=from_unit, decimals=decimals)
+        return self.mag_sys.convert(value=value, to_order=to_unit, from_order=from_unit, decimals=decimals)
 
 # code: language=python tabSize=4

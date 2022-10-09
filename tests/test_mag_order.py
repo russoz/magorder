@@ -11,15 +11,15 @@ from magorder.stdsi import StdSIMagnitudeUnit
 
 
 def test_base_magnitude_order_factor():
-    ord = StdSIMagnitudeUnit("m").orders
-    assert ord.factor("k") == 1000
-    assert ord.factor("m") == 0.001
-    assert ord.factor("µ") == 0.000_001
+    ms = StdSIMagnitudeUnit("m").mag_sys
+    assert ms.factor("k") == 1000
+    assert ms.factor("m") == 0.001
+    assert ms.factor("µ") == 0.000_001
 
 def test_base_magnitude_order_to_prefix():
-    ord = StdSIMagnitudeUnit("m").orders
-    assert ord.to_prefix(3) == "k"
-    assert ord.to_prefix(-6) == "µ"
+    ms = StdSIMagnitudeUnit("m").mag_sys
+    assert ms.to_prefix(3) == "k"
+    assert ms.to_prefix(-6) == "µ"
 
 def test_base_magnitude_order_alias_conflict():
     ord = [
