@@ -35,3 +35,5 @@ class StdSIMagnitudeUnit(BaseMagnitudeUnit):
     def __init__(self, unit, lower=None, upper=None, base=10):
         orders = MagnitudeSystem(self.std_si_order, lower=lower, upper=upper, base=base)
         super().__init__(unit, orders)
+
+# code: language=python tabSize=4

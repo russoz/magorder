@@ -59,3 +59,5 @@ class IECDataMagnitudeUnit(BaseMagnitudeUnit):
 
         orders = MagnitudeSystem(orders, lower=lower, upper=upper, base=1024)
         super().__init__(unit, orders)
+
+# code: language=python tabSize=4

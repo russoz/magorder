@@ -19,3 +19,5 @@ def test_mag_unit_invalid_units():
         mag.transform(23, from_unit="nee")
     with pytest.raises(ValueError):
         mag.transform(23, to_unit="noo")
+
+# code: language=python tabSize=4

@@ -37,7 +37,7 @@ def test_simple_std_si_magnitude_bounds():
     with pytest.raises(ValueError):
         assert mag.transform(100_000_000_000_000_000_000_000_000.0, "ym") == 100
     with pytest.raises(ValueError):
-        assert mag.transform(0.0000000000000000000001, "Ym") == 100
+        assert mag.transform(0.000_000_000_000_000_000_000_1, "Ym") == 100
 
 def test_from_std_si_magnitude():
     mag = StdSIMagnitudeUnit("m")
@@ -47,3 +47,5 @@ def test_magnitude_limits():
     mag = StdSIMagnitudeUnit("m", lower="c")
     with pytest.raises(ValueError):
         assert mag.transform(1000, "mm") == 1
+
+# code: language=python tabSize=4

@@ -50,3 +50,5 @@ def test_base_magnitude_order_invalid_limits():
         b = MagnitudeSystem(ord, lower="y")
     with pytest.raises(ValueError):
         b = MagnitudeSystem(ord, upper="Y")
+
+# code: language=python tabSize=4

@@ -35,3 +35,5 @@ def test_iec_data_case_insensitive():
     assert mags.transform(4096, from_unit="mibps", to_unit="Gibps") == 4
     assert mags.transform(1, "Kibps") == 1024
     assert mags.transform(8192, from_unit="Mibps", to_unit="gibps") == 8
+
+# code: language=python tabSize=4

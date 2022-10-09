@@ -10,3 +10,5 @@ from typing import Any, Dict, List, Union
 MagOrderListSpec = List[Dict[str, Any]]
 MagOrderSpec = Union[str, int]
 Number = Union[float, int]
+
+# code: language=python tabSize=4
