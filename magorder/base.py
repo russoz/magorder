@@ -9,7 +9,6 @@ from typing import Optional, Sequence
 
 from .types import MagOrderListSpec, MagOrderSpec, Number
 
-
 class MagnitudeOrder:
     def __init__(self, prefix: str, power: int, aliases: Optional[Sequence[str]] = None) -> None:
         self.prefix = prefix
@@ -20,14 +19,14 @@ class MagnitudeOrder:
         self._matching = set(aliases).union({prefix})
 
     @property
-    def symbols(self):
+    def prefixes(self):
         return set(self._matching)
 
     def match(self, text: str) -> bool:
-        return text in self._matching
+        return text in self.prefixes
 
     def match_all(self, text: MagOrderSpec) -> bool:
-        return text in self._matching or text == self.power
+        return text in self.prefixes or text == self.power
 
 
 class BaseMagnitudeOrder:
