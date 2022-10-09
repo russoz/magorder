@@ -4,7 +4,7 @@
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .base import BaseMagnitudeOrder, BaseMagnitudeUnit
+from .base import MagnitudeSystem, BaseMagnitudeUnit
 
 
 class SIDataMagnitudeUnit(BaseMagnitudeUnit):
@@ -21,7 +21,7 @@ class SIDataMagnitudeUnit(BaseMagnitudeUnit):
     ]
 
     def __init__(self, unit, lower=None, upper=None):
-        orders = BaseMagnitudeOrder(self.si_order, lower=lower, upper=upper, base=1000)
+        orders = MagnitudeSystem(self.si_order, lower=lower, upper=upper, base=1000)
         super().__init__(unit, orders)
 
 
@@ -57,5 +57,5 @@ class IECDataMagnitudeUnit(BaseMagnitudeUnit):
         if not case:
             orders = [_no_case(o) for o in orders]
 
-        orders = BaseMagnitudeOrder(orders, lower=lower, upper=upper, base=1024)
+        orders = MagnitudeSystem(orders, lower=lower, upper=upper, base=1024)
         super().__init__(unit, orders)

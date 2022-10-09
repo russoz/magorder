@@ -60,8 +60,8 @@ class MagnitudeOrder:
         return loc in self.prefixes or loc == self.power
 
 
-class BaseMagnitudeOrder:
-    """Base class for calculating orders of magnitude."""
+class MagnitudeSystem:
+    """System allowing conversion between different magnitudes."""
 
     class MagnitudeDoesNotExist(ValueError):
         """Exception for when a magnitude order passed as a parameter does not exist."""
@@ -209,7 +209,7 @@ class BaseMagnitudeUnit:
         def __init__(self, unit: str) -> None:
             super().__init__(f"Unknown unit '{unit}'")
 
-    def __init__(self, base_unit: str, orders: BaseMagnitudeOrder):
+    def __init__(self, base_unit: str, orders: MagnitudeSystem):
         self.base_unit = base_unit
         self.orders = orders
 

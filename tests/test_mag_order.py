@@ -6,7 +6,7 @@
 
 import pytest
 
-from magorder.base import BaseMagnitudeOrder
+from magorder.base import MagnitudeSystem
 from magorder.stdsi import StdSIMagnitudeUnit
 
 
@@ -28,7 +28,7 @@ def test_base_magnitude_order_alias_conflict():
         {"prefix": "", "power": 0, "aliases": ["m"]},
     ]
     with pytest.raises(ValueError):
-        b = BaseMagnitudeOrder(ord)
+        b = MagnitudeSystem(ord)
 
 def test_base_magnitude_order_duplicate_conflict():
     ord = [
@@ -38,7 +38,7 @@ def test_base_magnitude_order_duplicate_conflict():
         {"prefix": "", "power": 0, "aliases": ["m"]},
     ]
     with pytest.raises(ValueError):
-        b = BaseMagnitudeOrder(ord)
+        b = MagnitudeSystem(ord)
 
 def test_base_magnitude_order_invalid_limits():
     ord = [
@@ -47,6 +47,6 @@ def test_base_magnitude_order_invalid_limits():
         {"prefix": "", "power": 0},
     ]
     with pytest.raises(ValueError):
-        b = BaseMagnitudeOrder(ord, lower="y")
+        b = MagnitudeSystem(ord, lower="y")
     with pytest.raises(ValueError):
-        b = BaseMagnitudeOrder(ord, upper="Y")
+        b = MagnitudeSystem(ord, upper="Y")

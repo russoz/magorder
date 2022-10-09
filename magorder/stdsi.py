@@ -4,7 +4,7 @@
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .base import BaseMagnitudeOrder, BaseMagnitudeUnit
+from .base import MagnitudeSystem, BaseMagnitudeUnit
 
 
 class StdSIMagnitudeUnit(BaseMagnitudeUnit):
@@ -33,5 +33,5 @@ class StdSIMagnitudeUnit(BaseMagnitudeUnit):
     ]
 
     def __init__(self, unit, lower=None, upper=None, base=10):
-        orders = BaseMagnitudeOrder(self.std_si_order, lower=lower, upper=upper, base=base)
+        orders = MagnitudeSystem(self.std_si_order, lower=lower, upper=upper, base=base)
         super().__init__(unit, orders)
