@@ -16,12 +16,15 @@ def test_simple_std_si_magnitude():
     assert mag.transform(100_000_000, "µm") == 100
     assert mag.transform(100_000_000, "µm", "km") == 0.1
     assert mag.transform(100_000_000_000_000_000_000_000_000.0, "ym") == 100
-    assert mag.transform(0.000_000_000_000_000_000_000_1, "Ym", decimals=3) == 100
     assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym") == 0.0001
-    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=4) == 0.0001
-    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=4) == 0.0001
-    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=3) == 0.0
-    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym", decimals=3) == 0.0
+    mag.mag_sys.set_decimals(3)
+    assert mag.transform(0.000_000_000_000_000_000_000_1, "Ym") == 100
+    mag.mag_sys.set_decimals(4)
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym") == 0.0001
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym") == 0.0001
+    mag.mag_sys.set_decimals(3)
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym") == 0.0
+    assert mag.transform(0.000_000_000_000_000_000_000_000_000_1, "Ym") == 0.0
 
 def test_std_si_magnitude_aliases():
     mag = StdSIMagnitudeUnit("m")
