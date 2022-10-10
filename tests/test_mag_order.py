@@ -35,10 +35,22 @@ def test_base_magnitude_order_duplicate_conflict():
         {"prefix": "µ", "power": -6, "aliases": ["u"]},
         {"prefix": "m", "power": -3},
         {"prefix": "m", "power": 6},
-        {"prefix": "", "power": 0, "aliases": ["m"]},
+        {"prefix": "", "power": 0},
     ]
     with pytest.raises(ValueError):
         b = MagnitudeSystem(ord)
+
+def test_base_magnitude_order_specs_unsorted():
+    ord = [
+        {"prefix": "m", "power": -3},
+        {"prefix": "µ", "power": -6, "aliases": ["u"]},
+        {"prefix": "M", "power": 6},
+        {"prefix": "", "power": 0},
+    ]
+    b = MagnitudeSystem(ord)
+    assert len(b.magnitudes) == 4
+    assert b.magnitudes[0].power == -6
+    assert b.magnitudes[-1].power == 6
 
 def test_base_magnitude_order_invalid_limits():
     ord = [

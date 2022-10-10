@@ -59,6 +59,12 @@ class MagnitudeOrder:
         """
         return loc in self.prefixes or loc == self.power
 
+    def __str__(self) -> str:
+        return f"<MagnitudeOrder: '{self.prefix}' ({self.power}){f' aliases: {self.aliases}' if self.aliases else ''}>"
+
+    def __repr__(self) -> str:
+        return str(self)
+
 
 class MagnitudeSystem:
     """System allowing conversion between different magnitudes."""
@@ -112,6 +118,7 @@ class MagnitudeSystem:
             self.PrefixConflict: raised if the magnitudes specs contains conflicts.
         """
         mags = [MagnitudeOrder(**kw) for kw in magnitudes_spec]
+        mags = sorted(mags, key=lambda x: x.power)
 
         lower_power = mags[0].power
         if lower is not None:
